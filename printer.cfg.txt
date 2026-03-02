@@ -1,0 +1,188 @@
+
+[mcu]
+serial: /dev/serial0
+restart_method: command
+
+[printer]
+kinematics: cartesian
+max_velocity: 150
+max_accel: 800
+max_z_velocity: 3
+max_z_accel: 60
+
+[pause_resume]
+[display_status]
+
+[virtual_sdcard]
+path: /home/tomtmac/printer_data/gcodes
+
+# --- SAFE extruder (apenas para validar sensores/config) ---
+[extruder]
+step_pin: PB3
+dir_pin: !PB4
+enable_pin: !PD1
+microsteps: 16
+rotation_distance: 33.5
+nozzle_diameter: 0.4
+filament_diameter: 1.75
+
+heater_pin: PC8
+sensor_pin: PA0
+sensor_type: EPCOS 100K B57560G104F
+control: pid
+min_temp: 0
+min_extrude_temp: 0
+max_temp: 250
+max_power = 1.0
+pid_Kp: 20.645
+pid_Ki: 0.702
+pid_Kd: 151.744
+
+# --- SAFE bed (apenas para validar sensores/config) ---
+[heater_bed]
+heater_pin: PC9
+sensor_pin: PC4
+sensor_type: EPCOS 100K B57560G104F
+control: pid
+min_temp: 0
+max_temp: 110
+max_power = 1.0
+pid_Kp: 68.646
+pid_Ki: 2.447
+pid_Kd: 481.382
+
+# =====================
+# STEPPERS - PRUSA I3 PRO X (M8 Z)
+# =====================
+
+[verify_heater heater_bed]
+check_gain_time: 300
+heating_gain: 1
+
+[stepper_x]
+step_pin: PB13
+dir_pin: PB12
+enable_pin: !PB14
+microsteps: 16
+rotation_distance: 40.0
+endstop_pin: ^PC0
+position_endstop: 0
+position_max: 200
+homing_speed: 40
+
+[stepper_y]
+step_pin: PB10
+dir_pin: !PB2
+enable_pin: !PB11
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PC1
+position_endstop: 0
+position_max: 200
+homing_speed: 30
+
+[stepper_z]
+step_pin: PB0
+dir_pin: PC5
+enable_pin: !PB1
+microsteps: 16
+rotation_distance: 1.24025
+endstop_pin: ^PC2
+position_endstop: 0
+position_max: 180
+homing_speed: 2
+
+# FAN0 (normalmente fan de peça / part cooling)
+[fan]
+pin: PC6
+
+# FAN1 (normalmente fan do hotend/heatsink) - liga quando o bico aquece
+[heater_fan hotend_fan]
+pin: PC7
+heater: extruder
+heater_temp: 50.0
+
+[include mainsail.cfg]
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 20.645
+#*# pid_ki = 0.702
+#*# pid_kd = 151.744
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 68.646
+#*# pid_ki = 2.447
+#*# pid_kd = 481.382
+
+[gcode_macro NIVELAR_MESA]
+description: Inicia o nivelamento manual da mesa
+gcode:
+    G28
+    BED_SCREWS_ADJUST
+
+[bed_screws]
+screw1: 0,5
+screw1_name: Frente Esquerda
+screw2: 200,5
+screw2_name: Frente Direita
+screw3: 200,195
+screw3_name: Atras Direita
+screw4: 0,195
+screw4_name: Atras Esquerda
+
+
+
+
+# FAN2 - Fan da eletrônica regulado por temperatura da placa
+[temperature_fan controller_fan]
+pin: PB15
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 85
+target_temp: 40.0
+min_speed: 0.3
+max_power: 1.0
+kick_start_time: 0.5
+control: watermark
+
+########################################
+# TMC2209 - Configuração limpa
+########################################
+
+[tmc2209 stepper_x]
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 0
+run_current: 0.75
+hold_current: 0.50
+stealthchop_threshold: 999999
+
+[tmc2209 stepper_y]
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 2
+run_current: 0.85
+hold_current: 0.60
+stealthchop_threshold: 999999
+
+[tmc2209 stepper_z]
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 1
+run_current: 0.85
+hold_current: 0.75
+stealthchop_threshold: 999999
+
+[tmc2209 extruder]
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 3
+run_current: 0.90
+hold_current: 0.60
+stealthchop_threshold: 0
+
